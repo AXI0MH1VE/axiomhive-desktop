@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Axiom Hive - Deterministic AI Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .nav-btn {
+      padding: 0.75rem 1.5rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #3b82f6;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .nav-btn.active {
+      background: rgba(59, 130, 246, 0.3);
+      border-color: #3b82f6;
+    }
+
+    .card {
+      background: rgba(26, 26, 46, 0.6);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card h2 {
+      color: #3b82f6;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(10, 10, 10, 0.5);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      color: #e0e0e0;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result {
+      background: rgba(10, 10, 10, 0.5);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
+    .stat-label {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #9ca3af;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .log-entry {
+      background: rgba(10, 10, 10, 0.3);
+      border-left: 3px solid #3b82f6;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 4px;
+    }
+
+    .log-time {
+      color: #9ca3af;
+      font-size: 0.85rem;
+    }
+
+    .log-type {
+      color: #3b82f6;
+      font-weight: 600;
+      margin-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔷 Axiom Hive</h1>
+    <p class="subtitle">Deterministic AI Platform - Running Locally on Your Machine</p>
+  </header>
+
+  <div class="container">
+    <div class="nav">
+      <button class="nav-btn active" onclick="showView('dashboard')">Dashboard</button>
+      <button class="nav-btn" onclick="showView('inference')">New Inference</button>
+      <button class="nav-btn" onclick="showView('audit')">Audit Logs</button>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view">
+      <div class="stats" id="stats-container">
+        <div class="loading">Loading statistics...</div>
+      </div>
+      
+      <div class="card">
+        <h2>System Information</h2>
+        <div id="system-info">
+          <p>Initializing...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inference View -->
+    <div id="inference-view" class="hidden">
+      <div class="card">
+        <h2>Submit Inference Request</h2>
+        <div class="input-group">
+          <label for="prompt">Prompt</label>
+          <textarea id="prompt" placeholder="Enter your query here..."></textarea>
+        </div>
+        <button id="submit-btn" onclick="submitInference()">Run Inference</button>
+        
+        <div id="inference-result" class="hidden">
+          <h3 style="color: #3b82f6; margin-top: 2rem;">Result</h3>
+          <div class="result" id="result-text"></div>
+          <p style="color: #9ca3af; margin-top: 1rem;">
+            Confidence: <span id="confidence"></span> | 
+            Seed: <span id="seed"></span> | 
+            Job ID: <span id="job-id"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit View -->
+    <div id="audit-view" class="hidden">
+      <div class="card">
+        <h2>Audit Logs</h2>
+        <div id="audit-logs">
+          <div class="loading">Loading audit logs...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let serverUrl = '';
+
+    // Initialize
+    (async () => {
+      serverUrl = await window.electronAPI.getServerUrl();
+      loadDashboard();
+    })();
+
+    function showView(view) {
+      // Hide all views
+      document.getElementById('dashboard-view').classList.add('hidden');
+      document.getElementById('inference-view').classList.add('hidden');
+      document.getElementById('audit-view').classList.add('hidden');
+
+      // Update nav buttons
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Show selected view
+      document.getElementById(`${view}-view`).classList.remove('hidden');
+
+      // Load data for view
+      if (view === 'dashboard') loadDashboard();
+      if (view === 'audit') loadAuditLogs();
+    }
+
+    async function loadDashboard() {
+      try {
+        const response = await fetch(`${serverUrl}/api/stats`);
+        const data = await response.json();
+
+        document.getElementById('stats-container').innerHTML = `
+          <div class="stat-card">
+            <div class="stat-value">${data.totalJobs}</div>
+            <div class="stat-label">Total Inferences</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.completedJobs}</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${data.totalTransitions}</div>
+            <div class="stat-label">State Transitions</div>
+          </div>
+        `;
+
+        document.getElementById('system-info').innerHTML = `
+          <p><strong>Status:</strong> Running</p>
+          <p><strong>State Vector:</strong> [${data.systemState.map(x => x.toFixed(3)).join(', ')}]</p>
+          <p><strong>Public Key:</strong> <code style="font-size: 0.8rem;">${data.publicKey.substring(0, 60)}...</code></p>
+        `;
+      } catch (error) {
+        console.error('Failed to load dashboard:', error);
+      }
+    }
+
+    async function submitInference() {
+      const prompt = document.getElementById('prompt').value.trim();
+      if (!prompt) {
+        alert('Please enter a prompt');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+
+      try {
+        const response = await fetch(`${serverUrl}/api/inference`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await response.json();
+
+        document.getElementById('result-text').textContent = data.result;
+        document.getElementById('confidence').textContent = (data.confidence * 100).toFixed(1) + '%';
+        document.getElementById('seed').textContent = data.seed;
+        document.getElementById('job-id').textContent = data.jobId;
+        document.getElementById('inference-result').classList.remove('hidden');
+      } catch (error) {
+        alert('Inference failed: ' + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Run Inference';
+      }
+    }
+
+    async function loadAuditLogs() {
+      try {
+        const response = await fetch(`${serverUrl}/api/audit`);
+        const data = await response.json();
+
+        const logsHtml = data.logs.map(log => `
+          <div class="log-entry">
+            <span class="log-time">${new Date(log.created_at).toLocaleString()}</span>
+            <span class="log-type">${log.event_type}</span>
+            <p style="margin-top: 0.5rem; color: #9ca3af;">${log.event_data}</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #6b7280;">Hash: ${log.event_hash.substring(0, 16)}...</p>
+          </div>
+        `).join('');
+
+        document.getElementById('audit-logs').innerHTML = logsHtml || '<p>No audit logs yet</p>';
+      } catch (error) {
+        console.error('Failed to load audit logs:', error);
+      }
+    }
+  </script>
+</body>
+</html>

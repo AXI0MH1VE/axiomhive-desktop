@@ -1,0 +1,6 @@
+ignoredBuiltDependencies:
+  - electron
+  - electron-winstaller
+
+onlyBuiltDependencies:
+  - better-sqlite3
